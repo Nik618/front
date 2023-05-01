@@ -20,6 +20,6 @@ interface RetrofitInterface {
     suspend fun createOrder(@Body requestBody: RequestBody): Response<ResponseBody>
 
     @GET("get/orders")
-    fun getOrders(): Call<OrdersPojo>
+    fun getOrders(@Query("user") user: String): Call<OrdersPojo>
 
 }

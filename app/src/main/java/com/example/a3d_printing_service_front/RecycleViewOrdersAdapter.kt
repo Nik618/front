@@ -11,7 +11,14 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.example.a3d_printing_service_front.pojo.OrderPojo
 
-class RecycleViewOrdersAdapter(private val names: MutableList<OrderPojo>) : Adapter<RecycleViewOrdersAdapter.ViewHolder>() {
+
+class RecycleViewOrdersAdapter(private val names: MutableList<OrderPojo>, onClickListener: OnStateClickListener) : Adapter<RecycleViewOrdersAdapter.ViewHolder>() {
+
+    interface OnStateClickListener {
+        fun onStateClick(name: OrderPojo, position: Int)
+    }
+
+    private val listener: OnStateClickListener = onClickListener
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val textViewOrder: TextView = itemView.findViewById(R.id.textViewOrder)
@@ -22,6 +29,7 @@ class RecycleViewOrdersAdapter(private val names: MutableList<OrderPojo>) : Adap
         val itemView =
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.recycle_view_order_part, parent, false)
+
         return ViewHolder(itemView)
     }
 
@@ -30,8 +38,12 @@ class RecycleViewOrdersAdapter(private val names: MutableList<OrderPojo>) : Adap
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val name = names[position]
-        holder.textViewOrder.text = "Order number: ${name.id}\nDescription: ${name.description}"
+        holder.textViewOrder.text = "№${name.id} | ${name.status}\n\n${name.description}"
         holder.imageViewOrder.setImageBitmap(BitmapFactory.decodeByteArray(name.photo, 0, name.photo.size))
+
+        holder.itemView.setOnClickListener { listener.onStateClick(name, position) }
     }
+
+
 
 }

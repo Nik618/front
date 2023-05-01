@@ -2,7 +2,8 @@ package com.example.a3d_printing_service_front.pojo
 
 data class CreateOrderPojo (
         val description: String? = null,
-        var photo: ByteArray? = null
+        var photo: ByteArray? = null,
+        var user: String? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

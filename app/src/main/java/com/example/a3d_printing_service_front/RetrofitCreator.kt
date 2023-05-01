@@ -62,27 +62,17 @@ class RetrofitCreator {
         }
     }
 
-    fun createOrder(jsonObjectString: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            response = createRetrofitInterfaceWithAccessToken().createOrder(
-                RequestBody.create(
-                    MediaType.get("application/json; charset=utf-8"), jsonObjectString
-                )
+    suspend fun createOrder(jsonObjectString: String): Response<ResponseBody> {
+        return createRetrofitInterfaceWithAccessToken().createOrder(
+            RequestBody.create(
+                MediaType.get("application/json; charset=utf-8"), jsonObjectString
             )
-            withContext(Dispatchers.Main) {
-                if (response!!.isSuccessful) {
-                    Log.d("RESPONSE: ", response!!.body().toString())
-                } else {
-                    Log.e("RETROFIT ERROR: ", response!!.code().toString())
-                    throw Exception("RETROFIT ERROR: ${response!!.code()}")
-                }
-            }
-        }
+        )
     }
 
-    fun getOrders(): OrdersPojo? {
+    fun getOrders(user: String): OrdersPojo? {
         return createRetrofitInterfaceWithAccessToken()
-            .getOrders()
+            .getOrders(user)
             .execute()
             .body()
     }

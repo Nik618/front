@@ -6,7 +6,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 data class OrderPojo(
         val id: Int? = null,
         val description: String,
-        val photo: ByteArray
+        val photo: ByteArray,
+        val status: String,
+        val price: String,
+        val track: String
 ) {
 
         override fun equals(other: Any?): Boolean {

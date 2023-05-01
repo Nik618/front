@@ -4,5 +4,6 @@ class Storage {
      companion object {
           var accessToken = ""
           var refreshToken = ""
+          var user = ""
      }
 }

@@ -24,17 +24,17 @@ import retrofit2.Retrofit
 class SignUpActivity : AppCompatActivity() {
 
     var buttonSignUp: Button? = null
-    var buttonBack: Button? = null
+    //var buttonBack: Button? = null
 
     override fun onStart() {
         super.onStart()
         buttonSignUp = findViewById(R.id.buttonReg2)
-        buttonBack = findViewById(R.id.buttonBack)
+        //buttonBack = findViewById(R.id.buttonBack)
 
-        buttonBack!!.setOnClickListener() {
-            val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
-            startActivity(intent)
-        }
+//        buttonBack!!.setOnClickListener() {
+//            val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
+//            startActivity(intent)
+//        }
 
         buttonSignUp!!.setOnClickListener() {
             print("!")

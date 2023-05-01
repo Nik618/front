@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import okhttp3.OkHttpClient
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
+import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManager
@@ -46,6 +47,8 @@ class UnsafeOkHttpClient() {
             val builder = OkHttpClient.Builder()
             builder.sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
             builder.hostnameVerifier { _, _ -> true }
+            builder.readTimeout(60, TimeUnit.SECONDS)
+            builder.connectTimeout(60, TimeUnit.SECONDS)
             builder.build()
         } catch (e: Exception) {
             throw RuntimeException(e)
