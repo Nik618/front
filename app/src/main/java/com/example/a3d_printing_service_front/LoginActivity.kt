@@ -1,6 +1,7 @@
 package com.example.a3d_printing_service_front
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -30,33 +31,38 @@ import javax.net.ssl.*
 
 
 class LoginActivity : AppCompatActivity() {
+
+    private lateinit var alertDialog: AlertDialog
+
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        alertDialog = AlertDialog.Builder(this@LoginActivity).create()
         //val intent = Intent(Intent.ACTION_VIEW, Uri.parse("rtsp://feivur.ru:8554/test"))
         //startActivity(intent)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "SuspiciousIndentation")
     fun onClickLogin(view: View) {
         val okHttpClient: OkHttpClient = UnsafeOkHttpClient().getUnsafeOkHttpClient()!!
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://feivur.ru/")
+            .baseUrl("https://192.168.1.76:443/") // .baseUrl("https://feivur.ru/")
             .client(okHttpClient)
             .build()
         val retrofitInterface = retrofit.create(RetrofitInterface::class.java)
         val jsonObject = JSONObject()
         val login: EditText = findViewById(R.id.editTextTextEmailAddress)
         val password: EditText = findViewById(R.id.editTextTextPassword)
-        val info: TextView = findViewById(R.id.textView)
+
+
+        //val info: TextView = findViewById(R.id.textView)
         jsonObject.put("login", login.text)
         jsonObject.put("password", password.text)
 
         val jsonObjectString = jsonObject.toString()
 
-        // Create RequestBody ( We're not using any converter, like GsonConverter, MoshiConverter e.t.c, that's why we use RequestBody )
         val requestBody =
             RequestBody.create(MediaType.get("application/json; charset=utf-8"), jsonObjectString)
 
@@ -69,7 +75,6 @@ class LoginActivity : AppCompatActivity() {
                     withContext(Dispatchers.Main) {
                         if (response.isSuccessful) {
 
-                            // Convert raw JSON to pretty JSON using GSON library
                             val gson = GsonBuilder().setPrettyPrinting().create()
                             val prettyJson = gson.toJson(
                                 JsonParser().parse(
@@ -108,12 +113,19 @@ class LoginActivity : AppCompatActivity() {
 
                         } else {
                             Log.e("RETROFIT_ERROR", response.code().toString())
-                            info.text = "missing pair login/password"
+                            alertDialog.setMessage("missing pair login/password")
+                            alertDialog.show()
+                            alertDialog = AlertDialog.Builder(this@LoginActivity).create()
+                            //info.text = "missing pair login/password"
                         }
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
-                        info.text = "technical work in progress - please wait"
+                        Log.e("ERROR" , e.message!!)
+                        alertDialog.setMessage("technical works, please wait")
+                        alertDialog.show()
+                        alertDialog = AlertDialog.Builder(this@LoginActivity).create()
+                        //info.text = "technical work in progress - please wait"
                     }
                 }
             }

@@ -39,7 +39,7 @@ class RecycleViewOrdersAdapter(private val names: MutableList<OrderPojo>, onClic
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val name = names[position]
         holder.textViewOrder.text = "№${name.id} | ${name.status}\n\n${name.description}"
-        holder.imageViewOrder.setImageBitmap(BitmapFactory.decodeByteArray(name.photo, 0, name.photo.size))
+        holder.imageViewOrder.setImageBitmap(BitmapFactory.decodeByteArray(name.photo, 0, name.photo!!.size))
 
         holder.itemView.setOnClickListener { listener.onStateClick(name, position) }
     }

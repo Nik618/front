@@ -40,14 +40,13 @@ class AdminActivity : AppCompatActivity() {
         progressDialog = ProgressDialog(this, R.style.MyTheme)
         progressDialog.setCancelable(false)
         progressDialog.setProgressStyle(com.google.android.material.R.style.Base_Widget_AppCompat_ProgressBar)
-        getOrders()
+        //getOrders()
     }
 
     override fun onStart() {
         super.onStart()
-
+        getOrders()
     }
-
 
 
     private fun getOrders() {
@@ -73,6 +72,7 @@ class AdminActivity : AppCompatActivity() {
                             intent.putExtra("photo", name.photo)
                             intent.putExtra("price", name.price)
                             intent.putExtra("track", name.track)
+                            intent.putExtra("paymentAddress", name.paymentAddress)
                             startActivity(intent)
                         }
                     }

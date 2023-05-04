@@ -55,7 +55,7 @@
                     tools:ignore="Autofill,HardcodedText,LabelFor,NestedWeights,RtlSymmetry" />
 
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/orderImageViewAdmin"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -108,12 +108,65 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:id="@+id/priceLayout"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="1dp"
+                android:layout_weight="0.3"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/buttonDownloadFile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:onClick="onDownloadModel"
+                    android:text="download model"
+                    android:layout_weight="0.8"
+                    tools:ignore="HardcodedText,NestedWeights" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="1dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+
+                    <EditText
+                        android:id="@+id/editTextPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:autofillHints=""
+                        android:ems="8"
+                        android:inputType="text"
+                        android:text="1000"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        tools:ignore="LabelFor" />
+
+                    <Button
+                        android:id="@+id/buttonSetPrice"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="10dp"
+                        android:onClick="onClickAddPrice"
+                        android:text="set price"
+                        tools:ignore="HardcodedText" />
+
+                </LinearLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="1dp"
                 android:layout_marginTop="1dp"
+                android:layout_weight="2"
                 android:orientation="vertical"
                 tools:ignore="UselessParent">
 
@@ -131,45 +184,6 @@
                     android:textColor="@color/black"
                     tools:ignore="Autofill,HardcodedText,LabelFor,NestedWeights,RtlSymmetry" />
 
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginTop="1dp"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-
-                    <!--                    <ImageView-->
-                    <!--                        android:id="@+id/modelImageViewAdmin"-->
-                    <!--                        android:layout_width="match_parent"-->
-                    <!--                        android:layout_height="match_parent"-->
-                    <!--                        android:layout_margin="10dp"-->
-                    <!--                        android:layout_weight="1"-->
-                    <!--                        android:scaleType="centerCrop"-->
-                    <!--                        android:src="@drawable/empty_photo_unusable"-->
-                    <!--                        tools:ignore="ContentDescription,NestedWeights" />-->
-                    <EditText
-                        android:id="@+id/editTextTextPassword"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:autofillHints=""
-                        android:ems="8"
-                        android:inputType="textPassword"
-                        tools:ignore="LabelFor" />
-
-                    <Button
-                        android:id="@+id/buttonLogin"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="10dp"
-                        android:onClick="onClickAddPrice"
-                        android:text="set price"
-                        tools:ignore="HardcodedText" />
-
-                </LinearLayout>
 
             </LinearLayout>
 

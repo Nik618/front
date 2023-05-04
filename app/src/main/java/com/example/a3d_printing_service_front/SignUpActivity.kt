@@ -1,5 +1,6 @@
 package com.example.a3d_printing_service_front
 
+import android.app.AlertDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -24,20 +25,14 @@ import retrofit2.Retrofit
 class SignUpActivity : AppCompatActivity() {
 
     var buttonSignUp: Button? = null
-    //var buttonBack: Button? = null
+
+    private lateinit var alertDialog: AlertDialog
 
     override fun onStart() {
         super.onStart()
         buttonSignUp = findViewById(R.id.buttonReg2)
-        //buttonBack = findViewById(R.id.buttonBack)
-
-//        buttonBack!!.setOnClickListener() {
-//            val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
-//            startActivity(intent)
-//        }
-
+        alertDialog = AlertDialog.Builder(this@SignUpActivity).create()
         buttonSignUp!!.setOnClickListener() {
-            print("!")
             val okHttpClient: OkHttpClient = UnsafeOkHttpClient().getUnsafeOkHttpClient()!!
             val retrofit = Retrofit.Builder()
                 .baseUrl("https://feivur.ru/")
@@ -49,31 +44,44 @@ class SignUpActivity : AppCompatActivity() {
             val login: EditText = findViewById(R.id.editTextTextEmailAddress2)
             val password: EditText = findViewById(R.id.editTextTextPassword2)
             val info: TextView = findViewById(R.id.textView2)
+
+
+            if (login.text.isEmpty() || login.text.length > 20) {
+                alertDialog.setMessage("login must be more than 20 characters or empty")
+                alertDialog.show()
+                alertDialog = AlertDialog.Builder(this@SignUpActivity).create()
+                return@setOnClickListener
+            }
+
+            if (password.text.length < 8 || password.text.length > 30) {
+                alertDialog.setMessage("login must be less 8 and more than 30 characters")
+                alertDialog.show()
+                alertDialog = AlertDialog.Builder(this@SignUpActivity).create()
+                return@setOnClickListener
+            }
+
+
             jsonObject.put("name", name.text)
             jsonObject.put("login", login.text)
             jsonObject.put("password", password.text)
 
             val jsonObjectString = jsonObject.toString()
 
-            // Create RequestBody ( We're not using any converter, like GsonConverter, MoshiConverter e.t.c, that's why we use RequestBody )
             val requestBody = RequestBody.create(
                 MediaType.get("application/json; charset=utf-8"),
                 jsonObjectString
             )
 
             CoroutineScope(Dispatchers.IO).launch {
-                // Do the POST request and get response
                 val response = retrofitInterface.sign(requestBody)
 
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
-
-                        // Convert raw JSON to pretty JSON using GSON library
-                        val gson = GsonBuilder().setPrettyPrinting().create()
+                        val gson = GsonBuilder().setPrettyPrinting().create() //TODO вылет при регистрации
                         val prettyJson = gson.toJson(
                             JsonParser().parse(
                                 response.body()
-                                    ?.string() // About this thread blocking annotation : https://github.com/square/retrofit/issues/3255
+                                    ?.string()
                             )
                         )
 
@@ -81,9 +89,10 @@ class SignUpActivity : AppCompatActivity() {
                         setContentView(R.layout.activity_login)
 
                     } else {
-
                         Log.e("RETROFIT_ERROR", response.code().toString())
-                        info.text = "missing sign up"
+                        alertDialog.setMessage("technical works, please wait")
+                        alertDialog.show()
+                        alertDialog = AlertDialog.Builder(this@SignUpActivity).create()
                     }
                 }
             }

@@ -49,6 +49,7 @@ class UnsafeOkHttpClient() {
             builder.hostnameVerifier { _, _ -> true }
             builder.readTimeout(60, TimeUnit.SECONDS)
             builder.connectTimeout(60, TimeUnit.SECONDS)
+            builder.writeTimeout(60, TimeUnit.SECONDS)
             builder.build()
         } catch (e: Exception) {
             throw RuntimeException(e)
