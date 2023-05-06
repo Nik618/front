@@ -39,8 +39,6 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         alertDialog = AlertDialog.Builder(this@LoginActivity).create()
-        //val intent = Intent(Intent.ACTION_VIEW, Uri.parse("rtsp://feivur.ru:8554/test"))
-        //startActivity(intent)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -57,8 +55,6 @@ class LoginActivity : AppCompatActivity() {
         val login: EditText = findViewById(R.id.editTextTextEmailAddress)
         val password: EditText = findViewById(R.id.editTextTextPassword)
 
-
-        //val info: TextView = findViewById(R.id.textView)
         jsonObject.put("login", login.text)
         jsonObject.put("password", password.text)
 
@@ -114,19 +110,17 @@ class LoginActivity : AppCompatActivity() {
 
                         } else {
                             Log.e("RETROFIT_ERROR", response.code().toString())
-                            alertDialog.setMessage("missing pair login/password")
+                            alertDialog.setMessage("Неправильная пара логин/пароль")
                             alertDialog.show()
                             alertDialog = AlertDialog.Builder(this@LoginActivity).create()
-                            //info.text = "missing pair login/password"
                         }
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
                         Log.e("ERROR" , e.message!!)
-                        alertDialog.setMessage("technical works, please wait")
+                        alertDialog.setMessage("Сервер не отвечает. Пожалуйста, подождите")
                         alertDialog.show()
                         alertDialog = AlertDialog.Builder(this@LoginActivity).create()
-                        //info.text = "technical work in progress - please wait"
                     }
                 }
             }

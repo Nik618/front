@@ -1,25 +1,21 @@
 package com.example.a3d_printing_service_front
 
-import android.util.Log
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.a3d_printing_service_front.configs.UnsafeOkHttpClient
 import com.example.a3d_printing_service_front.interfaces.RetrofitInterface
 import com.example.a3d_printing_service_front.pojo.*
 import com.example.a3d_printing_service_front.pojo.yookassa.response.YooKassaResponse
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
 import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
 import okhttp3.*
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.await
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.LinkedBlockingQueue
+import java.util.*
 import java.util.concurrent.TimeUnit
 
-class RetrofitCreator {
+class RetrofitSender {
 
     var response: Response<ResponseBody>? = null
     var response2: String? = null
@@ -56,17 +52,6 @@ class RetrofitCreator {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         return retrofit.create(RetrofitInterface::class.java)
-    }
-
-    private suspend fun withContext(response: Response<ResponseBody>) {
-        withContext(Dispatchers.Main) {
-            if (response.isSuccessful) {
-                Log.d("RESPONSE: ", response.body().toString())
-            } else {
-                Log.e("RETROFIT ERROR: ", response.code().toString())
-                throw Exception("RETROFIT ERROR: ${response.code()}")
-            }
-        }
     }
 
     suspend fun createOrder(jsonObjectString: String): Response<ResponseBody> {
@@ -168,6 +153,21 @@ class RetrofitCreator {
             .approveReceiving(orderPojo)
             .execute()
             .body()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun refreshTokens() {
+        val splitString: List<String> = Storage.accessToken.split(".")
+        val base64EncodedBody = splitString[1]
+        val body = String(Base64.getUrlDecoder().decode(base64EncodedBody))
+        if (gson.fromJson(body, JwtPojo::class.java).exp.toInt() < (Date().time / 1000).toInt())
+            CoroutineScope(Dispatchers.IO).launch {
+                val jwtResponsePojo = token(TokenRequestPojo(refreshToken = Storage.refreshToken))
+                withContext(Dispatchers.Main) {
+                    Storage.accessToken = jwtResponsePojo?.accessToken!!
+                    println("Токен обновлён!")
+                }
+            }
     }
 
 

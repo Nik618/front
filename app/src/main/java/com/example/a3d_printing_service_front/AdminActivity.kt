@@ -3,12 +3,13 @@ package com.example.a3d_printing_service_front
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.a3d_printing_service_front.pojo.OrderPojo
@@ -20,12 +21,8 @@ import kotlinx.coroutines.withContext
 
 class AdminActivity : AppCompatActivity() {
 
-    private var imageView: ImageView? = null
-    private var editTextTextMultiLine: EditText? = null
     private var recyclerView: RecyclerView? = null
-
-    private val gson = Gson()
-    private val retrofitCreator = RetrofitCreator()
+    private val retrofitSender = RetrofitSender()
     private var orders = mutableListOf<OrderPojo>()
     private lateinit var alertDialog: AlertDialog
     private lateinit var progressDialog: ProgressDialog
@@ -41,9 +38,9 @@ class AdminActivity : AppCompatActivity() {
         progressDialog = ProgressDialog(this, R.style.MyTheme)
         progressDialog.setCancelable(false)
         progressDialog.setProgressStyle(com.google.android.material.R.style.Base_Widget_AppCompat_ProgressBar)
-        //getOrders()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStart() {
         super.onStart()
         if (Storage.refreshOrdersFlag) {
@@ -53,11 +50,13 @@ class AdminActivity : AppCompatActivity() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun getOrders() {
         progressDialog.show()
+        retrofitSender.refreshTokens()
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val responseOrders = retrofitCreator.getOrders("")?.orders
+                val responseOrders = retrofitSender.getOrders("")?.orders
                 withContext(Dispatchers.Main) {
                     println("responseOrders.size: " + responseOrders?.size)
                     orders.clear()
@@ -69,7 +68,6 @@ class AdminActivity : AppCompatActivity() {
 
                         override fun onStateClick(name: OrderPojo, position: Int) {
                             val intent = Intent(this@AdminActivity, OrderAdminActivity::class.java)
-                            println(intent.javaClass)
                             intent.putExtra("id", name.id)
                             intent.putExtra("description", name.description)
                             intent.putExtra("status", name.status)
@@ -86,7 +84,7 @@ class AdminActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    alertDialog.setMessage("Unable to get orders: ${e.localizedMessage}")
+                    alertDialog.setMessage("Невозможно получить список заказов: ${e.localizedMessage}")
                     alertDialog.show()
                 }
             }
@@ -98,6 +96,7 @@ class AdminActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun toRefresh(view: View) {
         getOrders()
     }

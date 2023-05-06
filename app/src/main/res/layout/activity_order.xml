@@ -107,6 +107,7 @@
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:layout_weight="1.5"
+                        android:onClick="showImage"
                         android:scaleType="centerCrop"
                         android:src="@drawable/empty_photo_unusable"
                         tools:ignore="ContentDescription,NestedWeights" />
@@ -194,8 +195,8 @@
                         android:layout_marginStart="1dp"
                         android:layout_marginTop="1dp"
                         android:layout_weight="5"
-                        android:visibility="gone"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
                         <TextView
                             android:id="@+id/orderTextViewTrack"
@@ -215,9 +216,9 @@
                             android:id="@+id/buttonReg"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:layout_weight="1"
                             android:backgroundTint="#B6B6B6"
                             android:onClick="onClickApprove"
-                            android:layout_weight="1"
                             android:text="Подтвердить получение"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"

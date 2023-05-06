@@ -5,14 +5,18 @@ import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.example.a3d_printing_service_front.pojo.OrderPojo
 import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
@@ -41,8 +45,9 @@ class OrderActivity : AppCompatActivity() {
     private var price: String? = null
     private var track: String? = null
     private var paymentAddress: String? = null
-    private val retrofitCreator = RetrofitCreator()
+    private val retrofitSender = RetrofitSender()
     private var fabCancel: FloatingActionButton? = null
+    private var layoutTrack: LinearLayout? = null
 
     private lateinit var progressDialog: ProgressDialog
     private lateinit var alertDialog: AlertDialog
@@ -56,12 +61,15 @@ class OrderActivity : AppCompatActivity() {
         orderTextViewFull = findViewById(R.id.orderTextViewFull)
         orderImageView = findViewById(R.id.orderImageView)
         fabCancel = findViewById(R.id.fabCancel)
+        layoutTrack = findViewById(R.id.layoutTrack)
+
         alertDialog = AlertDialog.Builder(this@OrderActivity).create()
         progressDialog = ProgressDialog(this, R.style.MyTheme)
         progressDialog.setCancelable(false)
         progressDialog.setProgressStyle(com.google.android.material.R.style.Base_Widget_AppCompat_ProgressBar)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n", "SetJavaScriptEnabled")
     override fun onStart() {
         super.onStart()
@@ -73,8 +81,9 @@ class OrderActivity : AppCompatActivity() {
         track = intent.getStringExtra("track")
         status = intent.getStringExtra("status")
         paymentAddress = intent.getStringExtra("paymentAddress")
+        retrofitSender.refreshTokens()
         CoroutineScope(Dispatchers.IO).launch {
-            val thisOrderStatus = retrofitCreator.getStatus(id!!)?.result
+            val thisOrderStatus = retrofitSender.getStatus(id!!)?.result
             withContext(Dispatchers.Main) {
                 status = thisOrderStatus
                 progressDialog.dismiss()
@@ -89,9 +98,10 @@ class OrderActivity : AppCompatActivity() {
                     player = ExoPlayer.Builder(this@OrderActivity)
                         .setMediaSourceFactory(DefaultMediaSourceFactory(this@OrderActivity).setLiveTargetOffsetMs(0))
                         .setLoadControl(dlc).build()
+                    retrofitSender.refreshTokens()
                     CoroutineScope(Dispatchers.IO).launch {
                         println("\n\n\n$id\n\n")
-                        val response = retrofitCreator.getVideo(id!!)
+                        val response = retrofitSender.getVideo(id!!)
                         withContext(Dispatchers.Main) {
                             val ms = RtspMediaSource.Factory().createMediaSource(MediaItem.fromUri(response?.result!!))
                             player?.setMediaSource(ms)
@@ -102,17 +112,22 @@ class OrderActivity : AppCompatActivity() {
                     }
                 } else playerView?.visibility = View.GONE
 
-                //if
+                if (status == "IN DELIVERY") {
+                    layoutTrack?.visibility = View.VISIBLE
+                }
 
-
+                if (status == "DONE") {
+                    layoutTrack?.visibility = View.GONE
+                }
 
                 orderTextViewPreview?.text = "$id | $status\n\n" +
                         when (status) {
-                            "NEW" -> "Заказ обрабатывается, пожалуйста, подождите"
-                            "WAITING TO PAYMENT" -> "Внесите оплату. Печать начнётся после подтверждения администратора"
-                            "PRINTING" -> "Ваш заказ печатается"
-                            "PREPARE TO DELIVERY" -> "Ваш заказ готов и передаётся в доставку"
-                            "IN DELIVERY" -> "Ваш заказ в пути!"
+                            "NEW" -> "Заказ обрабатывается, пожалуйста, подождите - администратор должен ознакомиться с заказом и назначить цену"
+                            "WAITING TO PAYMENT" -> "Внесите оплату. Печать начнётся после подтверждения оплаты администратором"
+                            "PRINTING" -> "Ваш заказ печатается, вы можете наблюдать за процессом изготовления ниже"
+                            "PREPARE TO DELIVERY" -> "Ваш заказ напечатан и в данный момент передаётся в доставку"
+                            "IN DELIVERY" -> "Ваш заказ в пути! Заказ можно отследить по выданному трек-номеру. Не забудьте подтвердить получение!"
+                            "DONE" -> "Заказ завершён"
                             else -> {}
                         }
                 orderTextViewFull?.text = "$description"
@@ -139,12 +154,9 @@ class OrderActivity : AppCompatActivity() {
                     }
                     webView!!.webViewClient = webViewClient
                     webView?.loadUrl(paymentAddress!!)
-
-
                     orderTextViewFull?.visibility = View.GONE
+
                 } else webView?.visibility = View.GONE
-
-
             }
         }
 
@@ -157,23 +169,24 @@ class OrderActivity : AppCompatActivity() {
         player?.release()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun toDelOrder(view: View) {
 
         val builder = AlertDialog.Builder(this)
 
-        builder.setTitle("Confirm")
-        builder.setMessage("Delete order? If order was paid, money will be returned")
+        builder.setTitle("Подтверждение")
+        builder.setMessage("Вы действительно хотите удалить заказ? Если вы уже провели оплату, средства будут возвращены")
 
         builder.setPositiveButton("YES") { dialog, _ ->
+            retrofitSender.refreshTokens()
             CoroutineScope(Dispatchers.IO).launch {
-                retrofitCreator.delOrder(id!!)
+                retrofitSender.delOrder(id!!)
                 withContext(Dispatchers.Main) {
                     Storage.refreshOrdersFlag = true
                     val intent = Intent(this@OrderActivity, MainActivity::class.java)
                     startActivity(intent)
-                    alertDialog.setMessage("Order successfully deleted! If order was paid, money will be returned.")
+                    alertDialog.setMessage("Заказ был удалён. Если вы уже провели оплату, средства будут возвращены")
                     alertDialog.show()
-                    alertDialog = AlertDialog.Builder(this@OrderActivity).create()
                 }
             }
             dialog.dismiss()
@@ -196,17 +209,42 @@ class OrderActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun onClickApprove(view: View) {}
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun onClickApprove(view: View) {
+        progressDialog.show()
+        retrofitSender.refreshTokens()
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = retrofitSender.approveReceiving(OrderPojo(id = id))
+            withContext(Dispatchers.Main) {
+                if (response?.status == "success") {
+                    alertDialog.setMessage("Подтверждение получения заказа отправлено администратору. Спасибо за заказ!")
+                    alertDialog.show()
+                    progressDialog.dismiss()
+                    retrofitSender.refreshTokens()
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val thisOrder = retrofitSender.getOrder(id!!)
+                        withContext(Dispatchers.Main) {
+                            Storage.refreshOrdersFlag = true
+                            status = thisOrder?.status
+                            progressDialog.dismiss()
+                        }
+                    }
+                } else {
+                    alertDialog.setMessage("Что-то пошло не так. Пожалуйста, попробуйте позже")
+                    alertDialog.show()
+                }
+            }
+        }
+    }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun toRefresh(view: View) {
         progressDialog.show()
+        retrofitSender.refreshTokens()
         CoroutineScope(Dispatchers.IO).launch {
-            val thisOrder = retrofitCreator.getOrder(id!!)
+            val thisOrder = retrofitSender.getOrder(id!!)
             withContext(Dispatchers.Main) {
                 if (status != thisOrder?.status) Storage.refreshOrdersFlag = true
-                //id = thisOrder?.id
-                //description = thisOrder?.description
-                //photo = thisOrder?.photo
                 status = thisOrder?.status
                 price = thisOrder?.price
                 track = thisOrder?.track
@@ -214,6 +252,12 @@ class OrderActivity : AppCompatActivity() {
                 progressDialog.dismiss()
             }
         }
+    }
+
+    fun showImage(view: View) {
+        val intent = Intent(this@OrderActivity, ImageActivity::class.java)
+        intent.putExtra("order_id", id)
+        startActivity(intent)
     }
 
 }

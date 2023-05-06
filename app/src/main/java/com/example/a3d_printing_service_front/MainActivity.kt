@@ -5,29 +5,20 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Intent
-import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
-import android.util.Log
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import androidx.cardview.widget.CardView
-import androidx.core.graphics.drawable.toBitmap
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.a3d_printing_service_front.pojo.CreateOrderPojo
 import com.example.a3d_printing_service_front.pojo.OrderPojo
-import com.google.gson.Gson
 import kotlinx.coroutines.*
-import java.io.ByteArrayOutputStream
-import java.io.IOException
 
 
 class MainActivity : Activity() {
 
     private var recyclerView: RecyclerView? = null
-    private val retrofitCreator = RetrofitCreator()
+    private val retrofitSender = RetrofitSender()
     private var orders = mutableListOf<OrderPojo>()
     private lateinit var alertDialog: AlertDialog
     private lateinit var progressDialog: ProgressDialog
@@ -47,9 +38,9 @@ class MainActivity : Activity() {
         progressDialog.setCancelable(false)
         progressDialog.setProgressStyle(com.google.android.material.R.style.Base_Widget_AppCompat_ProgressBar)
 
-        //getOrders()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStart() {
         super.onStart()
         if (Storage.refreshOrdersFlag) {
@@ -59,11 +50,13 @@ class MainActivity : Activity() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun getOrders() {
         progressDialog.show()
+        retrofitSender.refreshTokens()
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val responseOrders = retrofitCreator.getOrders(Storage.user)?.orders
+                val responseOrders = retrofitSender.getOrders(Storage.user)?.orders
                 withContext(Dispatchers.Main) {
                     println("responseOrders.size: " + responseOrders?.size)
                     orders.clear()
@@ -77,7 +70,7 @@ class MainActivity : Activity() {
                 }
             } catch (e: java.lang.Exception) {
                 withContext(Dispatchers.Main) {
-                    alertDialog.setMessage("Unable to get orders: ${e.localizedMessage}")
+                    alertDialog.setMessage("Невозможно получить список заказов: ${e.localizedMessage}")
                     alertDialog.show()
                     alertDialog = AlertDialog.Builder(this@MainActivity).create()
                     progressDialog.dismiss()
@@ -113,6 +106,7 @@ class MainActivity : Activity() {
         startActivity(intent)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun toRefresh(view: View) {
         getOrders()
     }
