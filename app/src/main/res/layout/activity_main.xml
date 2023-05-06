@@ -8,14 +8,41 @@
     tools:context=".MainActivity">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabRefresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="164dp"
+        android:contentDescription="Refresh"
+        android:onClick="toRefresh"
+        android:src="@drawable/floatingactionbuttonreload"
+        app:backgroundTint="#BFBFBF"
+        tools:ignore="HardcodedText,MissingConstraints" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
-        android:layout_margin="28dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="96dp"
         android:contentDescription="Create order"
         android:onClick="toCreateOrder"
         android:src="@drawable/floatingactionbutton"
+        app:backgroundTint="#BFBFBF"
+        tools:ignore="HardcodedText,MissingConstraints" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="28dp"
+        android:contentDescription="Logout"
+        android:onClick="toLogout"
+        android:src="@drawable/floatingactionbuttonlogout"
         app:backgroundTint="#BFBFBF"
         tools:ignore="HardcodedText,MissingConstraints" />
 

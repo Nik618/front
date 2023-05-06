@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,189 +8,326 @@
     android:background="#DCD9E1"
     tools:context=".OrderAdminActivity">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardViewAdmin"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_marginLeft="18dp"
-        android:layout_marginTop="18dp"
-        android:layout_marginRight="18dp"
-        android:layout_marginBottom="10dp"
-        android:visibility="visible"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabRefresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="96dp"
+        android:contentDescription="Refresh"
+        android:onClick="toRefresh"
+        android:src="@drawable/floatingactionbuttonreload"
+        app:backgroundTint="#BFBFBF"
+        tools:ignore="HardcodedText,MissingConstraints" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="1dp"
-            android:layout_marginEnd="2dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="28dp"
+        android:contentDescription="Logout"
+        android:onClick="toLogout"
+        android:src="@drawable/floatingactionbuttonlogout"
+        app:backgroundTint="#BFBFBF"
+        tools:ignore="HardcodedText,MissingConstraints" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_marginStart="1dp"
-                android:layout_marginTop="1dp"
-                android:orientation="horizontal"
-                tools:ignore="UselessParent">
-
-
-                <TextView
-                    android:id="@+id/orderTextViewPreviewAdmin"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_weight="1"
-                    android:gravity="top|start"
-                    android:singleLine="false"
-                    android:textColor="@color/black"
-                    tools:ignore="Autofill,HardcodedText,LabelFor,NestedWeights,RtlSymmetry" />
-
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/orderImageViewAdmin"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1.5"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/empty_photo_unusable"
-                    tools:ignore="ContentDescription,NestedWeights" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
-
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardViewFull"
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="18dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="18dp"
-        android:layout_marginBottom="10dp"
-        android:visibility="visible"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="#DCD9E1">
 
-        <!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-        <!--            android:id="@+id/fab"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_gravity="end|bottom"-->
-        <!--            android:layout_margin="4dp"-->
-        <!--            android:contentDescription="Create order"-->
-        <!--            android:onClick="addModelImage"-->
-        <!--            android:src="@drawable/floatingactionbutton"-->
-        <!--            app:backgroundTint="#BFBFBF"-->
-        <!--            tools:ignore="HardcodedText" />-->
-
-        <LinearLayout
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewAdmin"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="1dp"
-            android:layout_marginEnd="2dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_height="150dp"
+            android:layout_marginLeft="18dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginRight="18dp"
+            android:layout_marginBottom="10dp"
+            android:visibility="visible"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
-                android:id="@+id/priceLayout"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="match_parent"
                 android:layout_marginStart="1dp"
-                android:layout_marginTop="1dp"
-                android:layout_weight="0.3"
+                android:layout_marginEnd="2dp"
+                android:layout_weight="1"
                 android:orientation="vertical">
-
-                <Button
-                    android:id="@+id/buttonDownloadFile"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="10dp"
-                    android:onClick="onDownloadModel"
-                    android:text="download model"
-                    android:layout_weight="0.8"
-                    tools:ignore="HardcodedText,NestedWeights" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
                     android:layout_marginStart="1dp"
                     android:layout_marginTop="1dp"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    tools:ignore="UselessParent">
 
 
-                    <EditText
-                        android:id="@+id/editTextPrice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:autofillHints=""
-                        android:ems="8"
-                        android:inputType="text"
-                        android:text="1000"
-                        android:textAlignment="center"
+                    <TextView
+                        android:id="@+id/orderTextViewPreviewAdmin"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_weight="1"
+                        android:gravity="top|start"
+                        android:singleLine="false"
                         android:textColor="@color/black"
-                        tools:ignore="LabelFor" />
+                        tools:ignore="Autofill,HardcodedText,LabelFor,NestedWeights,RtlSymmetry" />
 
-                    <Button
-                        android:id="@+id/buttonSetPrice"
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/orderImageViewAdmin"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
-                        android:onClick="onClickAddPrice"
-                        android:text="set price"
-                        tools:ignore="HardcodedText" />
+                        android:layout_weight="1.5"
+                        android:onClick="showImage"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/empty_photo_unusable"
+                        tools:ignore="ContentDescription,NestedWeights" />
 
                 </LinearLayout>
+
             </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewFull"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="18dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="18dp"
+            android:layout_marginBottom="10dp"
+            android:visibility="visible"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="1dp"
-                android:layout_marginTop="1dp"
-                android:layout_weight="2"
-                android:orientation="vertical"
-                tools:ignore="UselessParent">
+                android:layout_marginEnd="2dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/orderTextViewFullAdmin"
+                <LinearLayout
+                    android:id="@+id/priceLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="1dp"
+                    android:layout_weight="0.3"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <Button
+                        android:id="@+id/buttonDownloadFile"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="10dp"
+                        android:layout_weight="0.8"
+                        android:backgroundTint="#B6B6B6"
+                        android:onClick="onDownloadModel"
+                        android:text="download model"
+                        tools:ignore="HardcodedText,NestedWeights" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+
+                        <EditText
+                            android:id="@+id/editTextPrice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:autofillHints=""
+                            android:ems="8"
+                            android:inputType="text"
+                            android:text="1000"
+                            android:textAlignment="center"
+                            android:textColor="@color/black"
+                            tools:ignore="LabelFor" />
+
+                        <Button
+                            android:id="@+id/buttonSetPrice"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="10dp"
+                            android:backgroundTint="#B6B6B6"
+                            android:onClick="onClickAddPrice"
+                            android:text="set price"
+                            tools:ignore="HardcodedText" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/acceptPayLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="1dp"
+                    android:layout_weight="0.5"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_weight="4"
+
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/editCameraId"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:autofillHints=""
+                            android:ems="8"
+                            android:inputType="text"
+                            android:text="video5"
+                            android:textAlignment="center"
+                            android:textColor="@color/black"
+                            tools:ignore="LabelFor" />
+
+                        <EditText
+                            android:id="@+id/editPathId"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:autofillHints=""
+                            android:ems="8"
+                            android:inputType="text"
+                            android:text="test1"
+                            android:textAlignment="center"
+                            android:textColor="@color/black"
+                            tools:ignore="LabelFor" />
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/buttonAcceptPay"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="10dp"
+                        android:layout_weight="2"
+                        android:backgroundTint="#B6B6B6"
+                        android:onClick="onStartVideo"
+                        android:text="confirm pay and start video"
+                        tools:ignore="HardcodedText,NestedWeights" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/stopVideoLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="1dp"
+                    android:layout_weight="2"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <Button
+                        android:id="@+id/buttonStopVideo"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="10dp"
+                        android:backgroundTint="#B6B6B6"
+                        android:onClick="onStopVideo"
+                        android:text="stop video and delivering"
+                        tools:ignore="HardcodedText,NestedWeights" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/prepareToDeliveryLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="1dp"
+                    android:layout_weight="0.5"
+                    android:visibility="gone"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/editTrack"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.3"
+                        android:autofillHints=""
+                        android:inputType="text"
+                        android:text="enter track number here"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        tools:ignore="HardcodedText,LabelFor,NestedWeights" />
+
+                    <Button
+                        android:id="@+id/buttonTrack"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="10dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="#B6B6B6"
+                        android:onClick="onTrack"
+                        android:text="send track number"
+                        tools:ignore="HardcodedText,NestedWeights" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_weight="1"
-                    android:gravity="top|start"
-                    android:singleLine="false"
-                    android:textColor="@color/black"
-                    tools:ignore="Autofill,HardcodedText,LabelFor,NestedWeights,RtlSymmetry" />
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="1dp"
+                    android:layout_weight="2"
+                    android:orientation="vertical"
+                    tools:ignore="UselessParent">
 
+                    <TextView
+                        android:id="@+id/orderTextViewFullAdmin"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_weight="1"
+                        android:gravity="top|start"
+                        android:singleLine="false"
+                        android:textColor="@color/black"
+                        tools:ignore="Autofill,HardcodedText,LabelFor,NestedWeights,RtlSymmetry" />
+
+
+                </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
 
-</TableLayout>
+    </TableLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

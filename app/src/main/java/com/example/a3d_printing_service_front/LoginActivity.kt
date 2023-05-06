@@ -46,9 +46,10 @@ class LoginActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n", "SuspiciousIndentation")
     fun onClickLogin(view: View) {
+        Storage.refreshOrdersFlag = true
         val okHttpClient: OkHttpClient = UnsafeOkHttpClient().getUnsafeOkHttpClient()!!
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://192.168.1.76:443/") // .baseUrl("https://feivur.ru/")
+            .baseUrl("https://feivur.ru/") //  https://192.168.1.76:443/
             .client(okHttpClient)
             .build()
         val retrofitInterface = retrofit.create(RetrofitInterface::class.java)

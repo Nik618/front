@@ -3,10 +3,7 @@ package com.example.a3d_printing_service_front
 import android.util.Log
 import com.example.a3d_printing_service_front.configs.UnsafeOkHttpClient
 import com.example.a3d_printing_service_front.interfaces.RetrofitInterface
-import com.example.a3d_printing_service_front.pojo.JwtResponsePojo
-import com.example.a3d_printing_service_front.pojo.OrderPojo
-import com.example.a3d_printing_service_front.pojo.OrdersPojo
-import com.example.a3d_printing_service_front.pojo.TokenRequestPojo
+import com.example.a3d_printing_service_front.pojo.*
 import com.example.a3d_printing_service_front.pojo.yookassa.response.YooKassaResponse
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -31,7 +28,7 @@ class RetrofitCreator {
     private fun createRetrofitInterface(): RetrofitInterface {
         val okHttpClient: OkHttpClient = UnsafeOkHttpClient().getUnsafeOkHttpClient()!!
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://192.168.1.76:443/") // .baseUrl("https://feivur.ru/")
+            .baseUrl("https://feivur.ru/") // .baseUrl("https://192.168.1.76:443/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -54,7 +51,7 @@ class RetrofitCreator {
             writeTimeout(900000, TimeUnit.SECONDS)
         }.build()
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://192.168.1.76:443/") // .baseUrl("https://feivur.ru/")
+            .baseUrl("https://feivur.ru/") // .baseUrl("https://192.168.1.76:443/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -110,11 +107,68 @@ class RetrofitCreator {
             .body()
     }
 
-    fun delOrder(id: Int): OrderPojo? {
+    fun delOrder(id: Int): ResultPojo? {
         return createRetrofitInterfaceWithAccessToken()
             .delOrder(id)
             .execute()
             .body()
     }
+
+    fun startVideo(startVideoPojo: StartVideoPojo): ResultPojo? {
+        return createRetrofitInterfaceWithAccessToken()
+            .startVideo(startVideoPojo)
+            .execute()
+            .body()
+    }
+
+    fun stopVideo(id: Int): ResultPojo? {
+        return createRetrofitInterfaceWithAccessToken()
+            .stopVideo(id)
+            .execute()
+            .body()
+    }
+
+    fun prepareToDelivery(orderPojo: OrderPojo): ResultPojo? {
+        return createRetrofitInterfaceWithAccessToken()
+            .prepareToDelivery(orderPojo)
+            .execute()
+            .body()
+    }
+
+    fun getVideo(id: Int): ResultPojo? {
+        return createRetrofitInterfaceWithAccessToken()
+            .getVideo(id)
+            .execute()
+            .body()
+    }
+
+    fun getOrder(id: Int): OrderPojo? {
+        return createRetrofitInterfaceWithAccessToken()
+            .getOrder(id)
+            .execute()
+            .body()
+    }
+
+    fun getPhoto(id: Int): OrderPojo? {
+        return createRetrofitInterfaceWithAccessToken()
+            .getPhoto(id)
+            .execute()
+            .body()
+    }
+
+    fun getStatus(id: Int): ResultPojo? {
+        return createRetrofitInterfaceWithAccessToken()
+            .getStatus(id)
+            .execute()
+            .body()
+    }
+
+    fun approveReceiving(orderPojo: OrderPojo): ResultPojo? {
+        return createRetrofitInterfaceWithAccessToken()
+            .approveReceiving(orderPojo)
+            .execute()
+            .body()
+    }
+
 
 }

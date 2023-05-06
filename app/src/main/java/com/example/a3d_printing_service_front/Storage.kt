@@ -5,5 +5,7 @@ class Storage {
           var accessToken = ""
           var refreshToken = ""
           var user = ""
+
+          var refreshOrdersFlag = false
      }
 }

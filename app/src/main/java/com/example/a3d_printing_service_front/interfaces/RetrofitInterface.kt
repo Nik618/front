@@ -1,9 +1,6 @@
 package com.example.a3d_printing_service_front.interfaces
 
-import com.example.a3d_printing_service_front.pojo.JwtResponsePojo
-import com.example.a3d_printing_service_front.pojo.OrderPojo
-import com.example.a3d_printing_service_front.pojo.OrdersPojo
-import com.example.a3d_printing_service_front.pojo.TokenRequestPojo
+import com.example.a3d_printing_service_front.pojo.*
 import com.example.a3d_printing_service_front.pojo.yookassa.response.YooKassaResponse
 import okhttp3.RequestBody
 
@@ -36,6 +33,31 @@ interface RetrofitInterface {
     fun getFile(@Query("id") id: Int): Call<OrderPojo>
 
     @GET("del/order")
-    fun delOrder(@Query("id") id: Int): Call<OrderPojo>
+    fun delOrder(@Query("id") id: Int): Call<ResultPojo>
+
+    @POST("start/video")
+    fun startVideo(@Body startVideoPojo: StartVideoPojo): Call<ResultPojo>
+
+    @GET("stop/video")
+    fun stopVideo(@Query("id") id: Int): Call<ResultPojo>
+
+    @POST("prepare/delivery")
+    fun prepareToDelivery(@Body orderPojo: OrderPojo): Call<ResultPojo>
+
+    @GET("get/video")
+    fun getVideo(@Query("id") id: Int): Call<ResultPojo>
+
+    @GET("get/order")
+    fun getOrder(@Query("id") id: Int): Call<OrderPojo>
+
+    @GET("get/photo")
+    fun getPhoto(@Query("id") id: Int): Call<OrderPojo>
+
+    @GET("get/status")
+    fun getStatus(@Query("id") id: Int): Call<ResultPojo>
+
+    @POST("approve/receiving")
+    fun approveReceiving(@Body orderPojo: OrderPojo): Call<ResultPojo>
+
 
 }

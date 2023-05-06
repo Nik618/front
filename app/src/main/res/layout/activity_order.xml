@@ -9,14 +9,41 @@
     tools:context=".OrderActivity">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabRefresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="96dp"
+        android:contentDescription="Refresh"
+        android:onClick="toRefresh"
+        android:src="@drawable/floatingactionbuttonreload"
+        app:backgroundTint="#BFBFBF"
+        tools:ignore="HardcodedText,MissingConstraints" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
-        android:layout_margin="28dp"
-        android:contentDescription="Create order"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="168dp"
+        android:contentDescription="Delete order"
         android:onClick="toDelOrder"
         android:src="@drawable/floatingactionbuttondelete"
+        app:backgroundTint="#BFBFBF"
+        tools:ignore="HardcodedText,MissingConstraints" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="28dp"
+        android:contentDescription="Logout"
+        android:onClick="toLogout"
+        android:src="@drawable/floatingactionbuttonlogout"
         app:backgroundTint="#BFBFBF"
         tools:ignore="HardcodedText,MissingConstraints" />
 
@@ -143,6 +170,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:scaleType="centerCrop"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.715"
@@ -156,7 +184,51 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="8dp"
-                        android:layout_weight="0.7" />
+                        android:layout_weight="0.1"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:id="@+id/layoutTrack"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_weight="5"
+                        android:visibility="gone"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/orderTextViewTrack"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_weight="1"
+                            android:gravity="top|start"
+                            android:singleLine="false"
+                            android:textColor="@color/black"
+                            tools:ignore="Autofill,HardcodedText,LabelFor,NestedWeights,RtlSymmetry" />
+
+                        <Button
+                            android:id="@+id/buttonReg"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:backgroundTint="#B6B6B6"
+                            android:onClick="onClickApprove"
+                            android:layout_weight="1"
+                            android:text="Подтвердить получение"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.495"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0.961"
+                            tools:ignore="HardcodedText" />
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </LinearLayout>

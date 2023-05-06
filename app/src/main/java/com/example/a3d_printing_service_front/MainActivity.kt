@@ -52,7 +52,10 @@ class MainActivity : Activity() {
 
     override fun onStart() {
         super.onStart()
-        getOrders()
+        if (Storage.refreshOrdersFlag) {
+            getOrders()
+            Storage.refreshOrdersFlag = false
+        }
     }
 
 
@@ -88,6 +91,7 @@ class MainActivity : Activity() {
 
         override fun onStateClick(name: OrderPojo, position: Int) {
             val intent = Intent(this@MainActivity, OrderActivity::class.java)
+            println(name.status)
             intent.putExtra("id", name.id)
             intent.putExtra("description", name.description)
             intent.putExtra("status", name.status)
@@ -102,5 +106,14 @@ class MainActivity : Activity() {
     fun toCreateOrder(view: View) {
         val intent = Intent(this@MainActivity, CreateOrderActivity::class.java)
         startActivity(intent)
+    }
+
+    fun toLogout(view: View) {
+        val intent = Intent(this@MainActivity, LoginActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun toRefresh(view: View) {
+        getOrders()
     }
 }

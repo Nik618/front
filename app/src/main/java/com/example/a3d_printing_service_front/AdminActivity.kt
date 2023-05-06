@@ -5,6 +5,7 @@ import android.app.ProgressDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
@@ -45,7 +46,10 @@ class AdminActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        getOrders()
+        if (Storage.refreshOrdersFlag) {
+            getOrders()
+            Storage.refreshOrdersFlag = false
+        }
     }
 
 
@@ -87,5 +91,14 @@ class AdminActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    fun toLogout(view: View) {
+        val intent = Intent(this@AdminActivity, LoginActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun toRefresh(view: View) {
+        getOrders()
     }
 }

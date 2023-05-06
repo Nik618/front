@@ -122,6 +122,7 @@ class CreateOrderActivity : Activity() {
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     fun createOrder(view: View) {
+        Storage.refreshOrdersFlag = true
         progressDialog.show()
         val baos = ByteArrayOutputStream()
         if (editTextTextMultiLine!!.text.toString() == "") {
