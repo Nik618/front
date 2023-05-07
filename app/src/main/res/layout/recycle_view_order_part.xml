@@ -33,6 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="16dp"
+                android:textSize="24sp"
                 android:layout_weight="1"
                 android:textColor="@color/black"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -41,7 +42,10 @@
                 android:id="@+id/imageViewOrder"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="16dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/empty_photo_unusable"
                 android:layout_weight="1.5"
                 android:scaleType="centerCrop"
                 tools:ignore="ContentDescription" />

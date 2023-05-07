@@ -84,6 +84,7 @@
                         android:gravity="top|start"
                         android:singleLine="false"
                         android:textColor="@color/black"
+                        android:textSize="18sp"
                         tools:ignore="Autofill,HardcodedText,LabelFor,NestedWeights,RtlSymmetry" />
 
 
@@ -91,7 +92,9 @@
                         android:id="@+id/orderImageViewAdmin"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_margin="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
                         android:layout_weight="1.5"
                         android:onClick="showImage"
                         android:scaleType="centerCrop"
@@ -143,11 +146,14 @@
                         android:id="@+id/buttonDownloadFile"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_margin="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
                         android:layout_weight="0.8"
                         android:backgroundTint="#B6B6B6"
                         android:onClick="onDownloadModel"
-                        android:text="download model"
+                        android:text="скачать модель"
                         tools:ignore="HardcodedText,NestedWeights" />
 
                     <LinearLayout
@@ -165,11 +171,14 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
                             android:autofillHints=""
-                            android:ems="8"
+                            android:backgroundTint="@color/black"
+                            android:ems="4"
+                            android:hint="1000"
                             android:inputType="text"
-                            android:text="1000"
+                            android:shadowColor="@color/black"
                             android:textAlignment="center"
                             android:textColor="@color/black"
+                            android:textColorHint="#8C8C8C"
                             tools:ignore="LabelFor" />
 
                         <Button
@@ -179,7 +188,7 @@
                             android:layout_margin="10dp"
                             android:backgroundTint="#B6B6B6"
                             android:onClick="onClickAddPrice"
-                            android:text="set price"
+                            android:text="установить цену"
                             tools:ignore="HardcodedText" />
 
                     </LinearLayout>
@@ -271,8 +280,8 @@
                     android:layout_marginStart="1dp"
                     android:layout_marginTop="1dp"
                     android:layout_weight="0.5"
-                    android:visibility="gone"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <EditText
                         android:id="@+id/editTrack"
@@ -281,7 +290,7 @@
                         android:layout_weight="1.3"
                         android:autofillHints=""
                         android:inputType="text"
-                        android:text="enter track number here"
+                        android:text="RV224870174HK"
                         android:textAlignment="center"
                         android:textColor="@color/black"
                         tools:ignore="HardcodedText,LabelFor,NestedWeights" />
@@ -319,6 +328,7 @@
                         android:gravity="top|start"
                         android:singleLine="false"
                         android:textColor="@color/black"
+                        android:textSize="18sp"
                         tools:ignore="Autofill,HardcodedText,LabelFor,NestedWeights,RtlSymmetry" />
 
 

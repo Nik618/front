@@ -13,7 +13,8 @@ data class OrderPojo(
         val status: String? = null,
         val price: String? = null,
         val track: String? = null,
-        val paymentAddress: String? = null
+        val paymentAddress: String? = null,
+        val address: String? = null
 ) {
 
         override fun equals(other: Any?): Boolean {

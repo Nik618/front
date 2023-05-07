@@ -6,6 +6,7 @@ data class CreateOrderPojo (
         var file: ByteArray? = null,
         var extension: String? = null,
         var mimeType: String? = null,
+        val address: String? = null,
         var user: String? = null
 ) {
     override fun equals(other: Any?): Boolean {

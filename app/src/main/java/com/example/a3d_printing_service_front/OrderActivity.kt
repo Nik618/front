@@ -48,6 +48,7 @@ class OrderActivity : AppCompatActivity() {
     private val retrofitSender = RetrofitSender()
     private var fabCancel: FloatingActionButton? = null
     private var layoutTrack: LinearLayout? = null
+    private var trackView: WebView? = null
 
     private lateinit var progressDialog: ProgressDialog
     private lateinit var alertDialog: AlertDialog
@@ -62,6 +63,8 @@ class OrderActivity : AppCompatActivity() {
         orderImageView = findViewById(R.id.orderImageView)
         fabCancel = findViewById(R.id.fabCancel)
         layoutTrack = findViewById(R.id.layoutTrack)
+        trackView = findViewById(R.id.track)
+        trackView!!.settings.javaScriptEnabled = true
 
         alertDialog = AlertDialog.Builder(this@OrderActivity).create()
         progressDialog = ProgressDialog(this, R.style.MyTheme)
@@ -73,6 +76,7 @@ class OrderActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n", "SetJavaScriptEnabled")
     override fun onStart() {
         super.onStart()
+        retrofitSender.refreshTokens()
         progressDialog.show()
         id = intent.getIntExtra("id", -1)
         description = intent.getStringExtra("description")
@@ -81,7 +85,6 @@ class OrderActivity : AppCompatActivity() {
         track = intent.getStringExtra("track")
         status = intent.getStringExtra("status")
         paymentAddress = intent.getStringExtra("paymentAddress")
-        retrofitSender.refreshTokens()
         CoroutineScope(Dispatchers.IO).launch {
             val thisOrderStatus = retrofitSender.getStatus(id!!)?.result
             withContext(Dispatchers.Main) {
@@ -90,7 +93,7 @@ class OrderActivity : AppCompatActivity() {
 
                 if (status == "NEW" || status == "WAITING TO PAYMENT") {
                     fabCancel?.visibility = View.VISIBLE
-                } else fabCancel?.visibility = View.GONE
+                }
 
                 if (status == "PRINTING") {
                     playerView?.visibility = View.VISIBLE
@@ -113,6 +116,18 @@ class OrderActivity : AppCompatActivity() {
                 } else playerView?.visibility = View.GONE
 
                 if (status == "IN DELIVERY") {
+                    progressDialog.show()
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val trackResponse = retrofitSender.getTrack(id!!)
+
+                        withContext(Dispatchers.Main) {
+                            if (trackResponse?.status == "success") {
+                                trackView!!.loadUrl("https://645761c30eaef4382032820b--harmonious-genie-4f1c9e.netlify.app?${trackResponse.result}")
+                                progressDialog.dismiss()
+                            }
+                        }
+                    }
+                    orderTextViewFull?.visibility = View.GONE
                     layoutTrack?.visibility = View.VISIBLE
                 }
 
@@ -120,18 +135,25 @@ class OrderActivity : AppCompatActivity() {
                     layoutTrack?.visibility = View.GONE
                 }
 
-                orderTextViewPreview?.text = "$id | $status\n\n" +
+                orderTextViewPreview?.text = "№$id | " +
                         when (status) {
-                            "NEW" -> "Заказ обрабатывается, пожалуйста, подождите - администратор должен ознакомиться с заказом и назначить цену"
-                            "WAITING TO PAYMENT" -> "Внесите оплату. Печать начнётся после подтверждения оплаты администратором"
-                            "PRINTING" -> "Ваш заказ печатается, вы можете наблюдать за процессом изготовления ниже"
-                            "PREPARE TO DELIVERY" -> "Ваш заказ напечатан и в данный момент передаётся в доставку"
-                            "IN DELIVERY" -> "Ваш заказ в пути! Заказ можно отследить по выданному трек-номеру. Не забудьте подтвердить получение!"
-                            "DONE" -> "Заказ завершён"
+                            "NEW" -> "НОВЫЙ\n" +
+                                    "\nАдминистратор должен ознакомиться с заказом и назначить цену - пожалуйста, подождите\n"
+                            "WAITING TO PAYMENT" -> "ОЖИДАЕТ ПОСТУПЛЕНИЯ СРЕДСТВ\n" +
+                                    "\nВнесите оплату - печать начнётся после подтверждения оплаты администратором"
+                            "PRINTING" -> "ПЕЧАТАЕТСЯ\n" +
+                                    "\nВаш заказ печатается - ниже вы можете наблюдать за процессом печати"
+                            "PREPARE TO DELIVERY" -> "ГОТОВИТСЯ К ДОСТАВКЕ\n" +
+                                    "\nВаш заказ напечатан и в данный момент передаётся в доставку"
+                            "IN DELIVERY" -> "В ПУТИ\n" +
+                                    "\nВаш заказ в пути, его можно отследить по трек-номеру ниже. Не забудьте подтвердить получение"
+                            "DONE" -> "ПОЛУЧЕН"
                             else -> {}
                         }
-                orderTextViewFull?.text = "$description"
-                orderImageView?.setImageBitmap(BitmapFactory.decodeByteArray(photo, 0, photo!!.size))
+                orderTextViewFull?.text = "Описание заказа:\n\n$description"
+
+                if (photo?.size != 0)
+                    orderImageView?.setImageBitmap(BitmapFactory.decodeByteArray(photo, 0, photo!!.size))
 
                 webView =
                     findViewById<WebView?>(R.id.webView).apply { settings.javaScriptEnabled = true }
@@ -155,7 +177,7 @@ class OrderActivity : AppCompatActivity() {
                     webView!!.webViewClient = webViewClient
                     webView?.loadUrl(paymentAddress!!)
                     orderTextViewFull?.visibility = View.GONE
-
+                    webView?.visibility = View.VISIBLE
                 } else webView?.visibility = View.GONE
             }
         }
@@ -178,7 +200,6 @@ class OrderActivity : AppCompatActivity() {
         builder.setMessage("Вы действительно хотите удалить заказ? Если вы уже провели оплату, средства будут возвращены")
 
         builder.setPositiveButton("YES") { dialog, _ ->
-            retrofitSender.refreshTokens()
             CoroutineScope(Dispatchers.IO).launch {
                 retrofitSender.delOrder(id!!)
                 withContext(Dispatchers.Main) {
@@ -212,7 +233,6 @@ class OrderActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun onClickApprove(view: View) {
         progressDialog.show()
-        retrofitSender.refreshTokens()
         CoroutineScope(Dispatchers.IO).launch {
             val response = retrofitSender.approveReceiving(OrderPojo(id = id))
             withContext(Dispatchers.Main) {
@@ -233,6 +253,7 @@ class OrderActivity : AppCompatActivity() {
                     alertDialog.setMessage("Что-то пошло не так. Пожалуйста, попробуйте позже")
                     alertDialog.show()
                 }
+                onStart()
             }
         }
     }
@@ -240,7 +261,6 @@ class OrderActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun toRefresh(view: View) {
         progressDialog.show()
-        retrofitSender.refreshTokens()
         CoroutineScope(Dispatchers.IO).launch {
             val thisOrder = retrofitSender.getOrder(id!!)
             withContext(Dispatchers.Main) {
@@ -249,7 +269,8 @@ class OrderActivity : AppCompatActivity() {
                 price = thisOrder?.price
                 track = thisOrder?.track
                 paymentAddress = thisOrder?.paymentAddress
-                progressDialog.dismiss()
+
+                onStart()
             }
         }
     }

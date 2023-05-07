@@ -155,6 +155,13 @@ class RetrofitSender {
             .body()
     }
 
+    fun getTrack(id: Int): ResultPojo? {
+        return createRetrofitInterfaceWithAccessToken()
+            .getTrack(id)
+            .execute()
+            .body()
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun refreshTokens() {
         val splitString: List<String> = Storage.accessToken.split(".")

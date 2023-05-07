@@ -30,6 +30,7 @@
         android:layout_marginBottom="168dp"
         android:contentDescription="Delete order"
         android:onClick="toDelOrder"
+        android:visibility="gone"
         android:src="@drawable/floatingactionbuttondelete"
         app:backgroundTint="#BFBFBF"
         tools:ignore="HardcodedText,MissingConstraints" />
@@ -95,6 +96,7 @@
                         android:layout_marginRight="10dp"
                         android:layout_marginBottom="10dp"
                         android:layout_weight="1"
+                        android:textSize="18sp"
                         android:gravity="top|start"
                         android:singleLine="false"
                         android:textColor="@color/black"
@@ -105,7 +107,9 @@
                         android:id="@+id/orderImageView"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_margin="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="10dp"
                         android:layout_weight="1.5"
                         android:onClick="showImage"
                         android:scaleType="centerCrop"
@@ -146,8 +150,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginTop="1dp"
+                    android:layout_margin="10dp"
                     android:orientation="vertical"
                     tools:ignore="UselessParent">
 
@@ -159,6 +162,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginBottom="10dp"
+                        android:textSize="18sp"
                         android:layout_weight="1"
                         android:gravity="top|start"
                         android:singleLine="false"
@@ -186,37 +190,29 @@
                         android:layout_height="match_parent"
                         android:layout_margin="8dp"
                         android:layout_weight="0.1"
+
                         android:visibility="gone" />
 
                     <LinearLayout
                         android:id="@+id/layoutTrack"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="1dp"
-                        android:layout_marginTop="1dp"
-                        android:layout_weight="5"
+                        android:layout_weight="0.1"
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <TextView
-                            android:id="@+id/orderTextViewTrack"
+                        <WebView
+                            android:id="@+id/track"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_marginLeft="10dp"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginRight="10dp"
-                            android:layout_marginBottom="10dp"
                             android:layout_weight="1"
-                            android:gravity="top|start"
-                            android:singleLine="false"
-                            android:textColor="@color/black"
-                            tools:ignore="Autofill,HardcodedText,LabelFor,NestedWeights,RtlSymmetry" />
+                            tools:ignore="NestedWeights" />
 
                         <Button
                             android:id="@+id/buttonReg"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
+                            android:layout_weight="12"
                             android:backgroundTint="#B6B6B6"
                             android:onClick="onClickApprove"
                             android:text="Подтвердить получение"

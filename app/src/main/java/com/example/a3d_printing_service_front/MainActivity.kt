@@ -47,13 +47,13 @@ class MainActivity : Activity() {
             getOrders()
             Storage.refreshOrdersFlag = false
         }
+        retrofitSender.refreshTokens()
     }
 
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getOrders() {
         progressDialog.show()
-        retrofitSender.refreshTokens()
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val responseOrders = retrofitSender.getOrders(Storage.user)?.orders

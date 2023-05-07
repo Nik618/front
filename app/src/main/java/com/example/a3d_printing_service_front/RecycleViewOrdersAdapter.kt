@@ -12,7 +12,10 @@ import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.example.a3d_printing_service_front.pojo.OrderPojo
 
 
-class RecycleViewOrdersAdapter(private val names: MutableList<OrderPojo>, onClickListener: OnStateClickListener) : Adapter<RecycleViewOrdersAdapter.ViewHolder>() {
+class RecycleViewOrdersAdapter(
+    private val names: MutableList<OrderPojo>,
+    onClickListener: OnStateClickListener
+) : Adapter<RecycleViewOrdersAdapter.ViewHolder>() {
 
     interface OnStateClickListener {
         fun onStateClick(name: OrderPojo, position: Int)
@@ -20,7 +23,7 @@ class RecycleViewOrdersAdapter(private val names: MutableList<OrderPojo>, onClic
 
     private val listener: OnStateClickListener = onClickListener
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textViewOrder: TextView = itemView.findViewById(R.id.textViewOrder)
         val imageViewOrder: ImageView = itemView.findViewById(R.id.imageViewOrder)
     }
@@ -38,12 +41,27 @@ class RecycleViewOrdersAdapter(private val names: MutableList<OrderPojo>, onClic
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val name = names[position]
-        holder.textViewOrder.text = "№${name.id} | ${name.status}\n\n${name.description}"
-        holder.imageViewOrder.setImageBitmap(BitmapFactory.decodeByteArray(name.photo, 0, name.photo!!.size))
+        holder.textViewOrder.text = "№${name.id} | " + when (name.status) {
+            "NEW" -> "НОВЫЙ"
+            "WAITING TO PAYMENT" -> "ОЖИДАЕТ ПОСТУПЛЕНИЯ СРЕДСТВ"
+            "PRINTING" -> "ПЕЧАТАЕТСЯ"
+            "PREPARE TO DELIVERY" -> "ГОТОВИТСЯ К ДОСТАВКЕ"
+            "IN DELIVERY" -> "В ПУТИ"
+            "DONE" -> "ПОЛУЧЕН"
+            else -> {}
+        }
+        "\n\n${name.description}"
+        if (name.photo?.size != 0)
+            holder.imageViewOrder.setImageBitmap(
+                BitmapFactory.decodeByteArray(
+                    name.photo,
+                    0,
+                    name.photo!!.size
+                )
+            )
 
         holder.itemView.setOnClickListener { listener.onStateClick(name, position) }
     }
-
 
 
 }

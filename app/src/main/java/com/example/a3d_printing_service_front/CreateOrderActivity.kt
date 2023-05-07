@@ -35,6 +35,7 @@ class CreateOrderActivity : Activity() {
     private var imageView: ImageView? = null
     private var imageViewModel: ImageView? = null
     private var editTextTextMultiLine: EditText? = null
+    private var editTextAddress: EditText? = null
     private val gson = Gson()
     private val retrofitSender = RetrofitSender()
     private lateinit var alertDialog: AlertDialog
@@ -44,6 +45,7 @@ class CreateOrderActivity : Activity() {
     private var extension: String? = null
     private var mimeType: String? = null
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_order)
@@ -51,10 +53,17 @@ class CreateOrderActivity : Activity() {
         imageView = findViewById(R.id.imageView)
         imageViewModel = findViewById(R.id.imageViewModel)
         editTextTextMultiLine = findViewById(R.id.editTextTextMultiLine)
+        editTextAddress = findViewById(R.id.editTextAddress)
         alertDialog = AlertDialog.Builder(this@CreateOrderActivity).create()
         progressDialog = ProgressDialog(this, R.style.MyTheme)
         progressDialog.setCancelable(false)
         progressDialog.setProgressStyle(com.google.android.material.R.style.Base_Widget_AppCompat_ProgressBar)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onStart() {
+        super.onStart()
+        retrofitSender.refreshTokens()
     }
 
     fun loadImage(view: View) {
@@ -124,9 +133,14 @@ class CreateOrderActivity : Activity() {
             progressDialog.dismiss()
             return
         }
+        if (editTextAddress!!.text.toString() == "") {
+            alertDialog.setMessage("Необходимо указать адрес отделения доставки")
+            alertDialog.show()
+            progressDialog.dismiss()
+            return
+        }
         imageView!!.drawable.toBitmap().compress(Bitmap.CompressFormat.PNG, 100, baos)
 
-        retrofitSender.refreshTokens()
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = retrofitSender.createOrder(
@@ -137,7 +151,8 @@ class CreateOrderActivity : Activity() {
                             file = fileData,
                             extension = extension,
                             mimeType = mimeType,
-                            user = Storage.user
+                            user = Storage.user,
+                            address = editTextAddress?.text.toString()
                         )
                     )
                 )
@@ -146,11 +161,6 @@ class CreateOrderActivity : Activity() {
                         Log.d("RESPONSE: ", response.body().toString())
                         println("New order successful create")
                         progressDialog.dismiss()
-//                        alertDialog.setMessage("Order successful create!")
-//                        alertDialog.show()
-                        editTextTextMultiLine?.setText("")
-                        imageView?.setImageDrawable(null)
-                        imageView?.setImageResource(R.drawable.empty_photo)
                         val intent = Intent(this@CreateOrderActivity, MainActivity::class.java)
                         startActivity(intent)
                     } else {

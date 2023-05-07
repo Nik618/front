@@ -36,7 +36,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginTop="18dp"
                 android:textAlignment="center"
-                android:text="Опишите заказ и загрузите модель \nФото не обязательно"
+                android:text="Опишите заказ, укажите адрес отделения доставки и загрузите модель (фото не обязательно)"
                 android:textColor="@color/black"
                 android:layout_weight="2.6"
                 tools:ignore="HardcodedText" />
@@ -49,12 +49,31 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
-                android:layout_weight="1"
+                android:layout_weight="1.3"
                 android:gravity="top|start"
                 android:inputType="textMultiLine"
                 android:singleLine="false"
                 android:textColor="@color/black"
                 tools:ignore="Autofill,HardcodedText,LabelFor,NestedWeights,RtlSymmetry" />
+
+            <EditText
+                android:id="@+id/editTextAddress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="2.6"
+                android:gravity="top|start"
+                android:hint="адрес отделения доставки"
+                android:color="@color/black"
+                android:backgroundTint="@color/black"
+                android:textColorHint="#888888"
+                android:textAlignment="center"
+                android:inputType="text"
+                android:textColor="@color/black"
+                tools:ignore="Autofill,HardcodedText,LabelFor,NestedWeights,RtlCompat,RtlSymmetry" />
 
             <LinearLayout
                 android:layout_width="match_parent"

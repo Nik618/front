@@ -34,6 +34,7 @@ class OrderAdminActivity : Activity() {
     private var price: String? = null
     private var track: String? = null
     private var paymentAddress: String? = null
+    private var address: String? = null
     private var fileData: ByteArray? = null
     private var editTextPrice: EditText? = null
     private var buttonSetPrice: Button? = null
@@ -41,6 +42,7 @@ class OrderAdminActivity : Activity() {
     private var acceptPayLayout: LinearLayout? = null
     private var stopVideoLayout: LinearLayout? = null
     private var prepareToDeliveryLayout: LinearLayout? = null
+    private var editTrack: EditText? = null
 
     private var editCameraId: EditText? = null
     private var editPathId: EditText? = null
@@ -64,16 +66,18 @@ class OrderAdminActivity : Activity() {
         prepareToDeliveryLayout = findViewById(R.id.prepareToDeliveryLayout)
         editCameraId = findViewById(R.id.editCameraId)
         editPathId = findViewById(R.id.editPathId)
+        editTrack = findViewById(R.id.editTrack)
 
         progressDialog = ProgressDialog(this, R.style.MyTheme)
         progressDialog.setCancelable(false)
         progressDialog.setProgressStyle(com.google.android.material.R.style.Base_Widget_AppCompat_ProgressBar)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     override fun onStart() {
         super.onStart()
-
+        retrofitSender.refreshTokens()
         progressDialog.show()
         CoroutineScope(Dispatchers.IO).launch {
             id = intent.getIntExtra("id", -1)
@@ -82,21 +86,32 @@ class OrderAdminActivity : Activity() {
             price = intent.getStringExtra("price")
             track = intent.getStringExtra("track")
             status = intent.getStringExtra("status")
+            address = intent.getStringExtra("address")
             paymentAddress = intent.getStringExtra("paymentAddress")
             val thisOrderStatus = retrofitSender.getStatus(id!!)?.result
             withContext(Dispatchers.Main) {
                 status = thisOrderStatus
                 progressDialog.dismiss()
                 alertDialog = AlertDialog.Builder(this@OrderAdminActivity).create()
-                orderTextViewPreviewAdmin?.text = "$id | $status"
-                orderTextViewFullAdmin?.text = "$description"
-                orderImageViewAdmin?.setImageBitmap(
-                    BitmapFactory.decodeByteArray(
-                        photo,
-                        0,
-                        photo!!.size
+                orderTextViewPreviewAdmin?.text = "№$id | " + when (status) {
+                    "NEW" -> "НОВЫЙ"
+                    "WAITING TO PAYMENT" -> "ОЖИДАЕТ ПОСТУПЛЕНИЯ СРЕДСТВ"
+                    "PRINTING" -> "ПЕЧАТАЕТСЯ"
+                    "PREPARE TO DELIVERY" -> "ГОТОВИТСЯ К ДОСТАВКЕ"
+                    "IN DELIVERY" -> "В ПУТИ"
+                    "DONE" -> "ПОЛУЧЕН"
+                    else -> {}
+                }
+                "\n\nАдрес для доставки:\n$address"
+                orderTextViewFullAdmin?.text = "Описание заказа:\n\n$description"
+                if (photo?.size != 0)
+                    orderImageViewAdmin?.setImageBitmap(
+                        BitmapFactory.decodeByteArray(
+                            photo,
+                            0,
+                            photo!!.size
+                        )
                     )
-                )
 
                 when (status) {
                     "NEW" -> {
@@ -155,6 +170,7 @@ class OrderAdminActivity : Activity() {
         Storage.refreshOrdersFlag = true
         val price = editTextPrice?.text.toString()
         if (!editTextPrice?.text.toString().matches(Regex("-?\\d+"))) {
+            progressDialog.dismiss()
             alertDialog.setMessage("Цена указана некорректно")
             alertDialog.show()
             alertDialog = AlertDialog.Builder(this@OrderAdminActivity).create()
@@ -162,7 +178,6 @@ class OrderAdminActivity : Activity() {
         }
 
         if (Integer.parseInt(price) in 1..99999) {
-            retrofitSender.refreshTokens()
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val response = retrofitSender.setPrice(
@@ -176,8 +191,9 @@ class OrderAdminActivity : Activity() {
                     withContext(Dispatchers.Main) {
                         progressDialog.dismiss()
                         println(response)
-                        status = "WAITING TO PAYMENT"
-                        orderTextViewPreviewAdmin?.text = "$id | $status"
+//                        status = "WAITING TO PAYMENT"
+//                        orderTextViewPreviewAdmin?.text = "$id | $status"
+                        onStart()
                         priceLayout?.visibility = View.GONE
                         acceptPayLayout?.visibility = View.VISIBLE
                         alertDialog.setMessage("Цена успешно установлена. Необходимо подтвердить получение средств после оплаты заказа клиентом")
@@ -188,6 +204,7 @@ class OrderAdminActivity : Activity() {
                         alertDialog.setMessage("Невозможно установить цену: ${e.localizedMessage}")
                         alertDialog.show()
                         alertDialog = AlertDialog.Builder(this@OrderAdminActivity).create()
+                        progressDialog.dismiss()
                     }
                 }
             }
@@ -195,6 +212,7 @@ class OrderAdminActivity : Activity() {
             alertDialog.setMessage("Цена указана некорректно")
             alertDialog.show()
             alertDialog = AlertDialog.Builder(this@OrderAdminActivity).create()
+            progressDialog.dismiss()
         }
     }
 
@@ -214,7 +232,6 @@ class OrderAdminActivity : Activity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onDownloadModel(view: View) {
-        retrofitSender.refreshTokens()
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = retrofitSender.getFile(id!!)
@@ -248,7 +265,6 @@ class OrderAdminActivity : Activity() {
     fun onStartVideo(view: View) {
         progressDialog.show()
         Storage.refreshOrdersFlag = true
-        retrofitSender.refreshTokens()
         CoroutineScope(Dispatchers.IO).launch {
             val response = retrofitSender.startVideo(
                 StartVideoPojo(
@@ -260,8 +276,9 @@ class OrderAdminActivity : Activity() {
             withContext(Dispatchers.Main) {
                 progressDialog.dismiss()
                 if (response?.status == "success") {
-                    status = "PRINTING"
-                    orderTextViewPreviewAdmin?.text = "$id | $status"
+//                    status = "PRINTING"
+//                    orderTextViewPreviewAdmin?.text = "$id | $status"
+                    onStart()
                     acceptPayLayout?.visibility = View.GONE
                     stopVideoLayout?.visibility = View.VISIBLE
                     alertDialog.setMessage("Видео-трансляция успешно запущена! Данные отправлены клиенту")
@@ -276,18 +293,28 @@ class OrderAdminActivity : Activity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @RequiresApi(Build.VERSION_CODES.O)
     fun onStopVideo(view: View) {
         progressDialog.show()
         Storage.refreshOrdersFlag = true
-        retrofitSender.refreshTokens()
         CoroutineScope(Dispatchers.IO).launch {
             val response = retrofitSender.stopVideo(id!!)
             withContext(Dispatchers.Main) {
                 progressDialog.dismiss()
                 if (response?.status == "success") {
-                    status = "PREPARE TO DELIVERY"
-                    orderTextViewPreviewAdmin?.text = "$id | $status"
+//                    status = "PREPARE TO DELIVERY"
+//                    orderTextViewPreviewAdmin?.text = "№$id | " +
+//                            when (status) {
+//                                "NEW" -> "НОВЫЙ"
+//                                "WAITING TO PAYMENT" -> "ОЖИДАЕТ ПОСТУПЛЕНИЯ СРЕДСТВ"
+//                                "PRINTING" -> "ПЕЧАТАЕТСЯ"
+//                                "PREPARE TO DELIVERY" -> "ГОТОВИТСЯ К ДОСТАВКЕ"
+//                                "IN DELIVERY" -> "В ПУТИ"
+//                                "DONE" -> "ПОЛУЧЕН"
+//                                else -> {}
+//                            }
+                    onStart()
                     alertDialog.setMessage("Статус заказа изменён. Необходимо отправить заказ клиенту и передать ему трек-номер для отслеживания посылки")
                     stopVideoLayout?.visibility = View.GONE
                     prepareToDeliveryLayout?.visibility = View.VISIBLE
@@ -306,14 +333,19 @@ class OrderAdminActivity : Activity() {
     fun onTrack(view: View) {
         progressDialog.show()
         Storage.refreshOrdersFlag = true
-        retrofitSender.refreshTokens()
         CoroutineScope(Dispatchers.IO).launch {
-            val response = retrofitSender.prepareToDelivery(OrderPojo(id = id))
+            val response = retrofitSender.prepareToDelivery(
+                OrderPojo(
+                    id = id,
+                    track = editTrack?.text.toString()
+                )
+            )
             withContext(Dispatchers.Main) {
                 progressDialog.dismiss()
                 if (response?.status == "success") {
-                    status = "IN DELIVERY"
-                    orderTextViewPreviewAdmin?.text = "$id | $status"
+//                    status = "IN DELIVERY"
+//                    orderTextViewPreviewAdmin?.text = "$id | $status"
+                    onStart()
                     alertDialog.setMessage("Статус заказа изменён. Ожидается подтверждение получения заказа со стороны клиента")
                     prepareToDeliveryLayout?.visibility = View.GONE
                     alertDialog.show()
@@ -335,7 +367,6 @@ class OrderAdminActivity : Activity() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun toRefresh(view: View) {
         progressDialog.show()
-        retrofitSender.refreshTokens()
         CoroutineScope(Dispatchers.IO).launch {
             val thisOrder = retrofitSender.getOrder(id!!)
             withContext(Dispatchers.Main) {
@@ -347,6 +378,7 @@ class OrderAdminActivity : Activity() {
                     paymentAddress = thisOrder?.paymentAddress
                 }
                 progressDialog.dismiss()
+                onStart()
             }
         }
     }

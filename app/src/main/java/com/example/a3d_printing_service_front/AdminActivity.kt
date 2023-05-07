@@ -43,6 +43,7 @@ class AdminActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStart() {
         super.onStart()
+        retrofitSender.refreshTokens()
         if (Storage.refreshOrdersFlag) {
             getOrders()
             Storage.refreshOrdersFlag = false
@@ -53,7 +54,7 @@ class AdminActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getOrders() {
         progressDialog.show()
-        retrofitSender.refreshTokens()
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val responseOrders = retrofitSender.getOrders("")?.orders
@@ -74,6 +75,7 @@ class AdminActivity : AppCompatActivity() {
                             intent.putExtra("photo", name.photo)
                             intent.putExtra("price", name.price)
                             intent.putExtra("track", name.track)
+                            intent.putExtra("address", name.address)
                             intent.putExtra("paymentAddress", name.paymentAddress)
                             startActivity(intent)
                         }

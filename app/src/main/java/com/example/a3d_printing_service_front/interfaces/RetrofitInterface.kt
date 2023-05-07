@@ -59,5 +59,7 @@ interface RetrofitInterface {
     @POST("approve/receiving")
     fun approveReceiving(@Body orderPojo: OrderPojo): Call<ResultPojo>
 
+    @GET("get/track")
+    fun getTrack(@Query("id") id: Int): Call<ResultPojo>
 
 }

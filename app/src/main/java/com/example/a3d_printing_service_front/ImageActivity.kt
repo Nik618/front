@@ -1,9 +1,11 @@
 package com.example.a3d_printing_service_front
 
+import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
+import android.webkit.WebView
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -15,9 +17,19 @@ import kotlinx.coroutines.withContext
 
 class ImageActivity : AppCompatActivity() {
     private var mImageView: ImageView? = null
+
+
     private var retrofitSender = RetrofitSender()
+
     private lateinit var progressDialog: ProgressDialog
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onStart() {
+        super.onStart()
+        retrofitSender.refreshTokens()
+    }
+
+    @SuppressLint("SetJavaScriptEnabled", "MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +44,6 @@ class ImageActivity : AppCompatActivity() {
         val id = intent.extras?.getInt("order_id")
 
         progressDialog.show()
-        retrofitSender.refreshTokens()
         CoroutineScope(Dispatchers.IO).launch {
             val imageData = retrofitSender.getPhoto(id!!)?.photo
             withContext(Dispatchers.Main) {
